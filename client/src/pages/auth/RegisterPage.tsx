@@ -26,7 +26,7 @@ export const RegisterPage: React.FC = () => {
         name,
         email,
         password,
-        feeAmount: 60.0,
+        feeAmount: 2000.0,
       });
 
       navigate('/member/home');
@@ -105,7 +105,7 @@ export const RegisterPage: React.FC = () => {
 
             <div className="p-3 bg-gym-plate/50 rounded-xl border border-gym-border/60 text-xs text-gym-muted flex items-center space-x-2">
               <ShieldCheck className="w-4 h-4 text-gym-greenBright flex-shrink-0" />
-              <span>Standard Monthly Tier: $60.00 / month. 30-day initial pass included.</span>
+              <span>Standard Monthly Tier: ₹2,000 / month. 30-day initial pass included.</span>
             </div>
 
             <button

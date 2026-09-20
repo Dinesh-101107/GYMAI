@@ -115,7 +115,7 @@ export async function getMemberById(req: Request, res: Response): Promise<void> 
 
 export async function createMember(req: Request, res: Response): Promise<void> {
   try {
-    const { email, name, phone, feeAmount = 60, membershipStatus = 'active', password } = req.body;
+    const { email, name, phone, feeAmount = 2000, membershipStatus = 'active', password } = req.body;
 
     if (!email || !name) {
       res.status(400).json({ error: 'Email and name are required.' });

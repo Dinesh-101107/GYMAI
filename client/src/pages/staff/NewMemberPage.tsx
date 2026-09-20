@@ -7,7 +7,7 @@ import { ArrowLeft, UserPlus, AlertCircle, CheckCircle2 } from 'lucide-react';
 export const NewMemberPage: React.FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [feeAmount, setFeeAmount] = useState('60');
+  const [feeAmount, setFeeAmount] = useState('2000');
   const [membershipStatus, setMembershipStatus] = useState('active');
   const [password, setPassword] = useState('MemberPass123!');
   const [loading, setLoading] = useState(false);
@@ -102,7 +102,7 @@ export const NewMemberPage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold text-gym-subtext uppercase tracking-wider mb-1.5">
-                Monthly Fee Rate ($)
+                Monthly Fee Rate (₹)
               </label>
               <input
                 type="number"

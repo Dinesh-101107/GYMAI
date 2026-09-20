@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Member } from '../../types/index.js';
 import ChalkBadge from '../common/ChalkBadge.js';
-import { Search, ArrowUpDown, ChevronRight, DollarSign, QrCode, AlertCircle } from 'lucide-react';
+import { Search, ArrowUpDown, ChevronRight, IndianRupee, QrCode, AlertCircle } from 'lucide-react';
 
 interface MembersTableProps {
   members: Member[];
@@ -184,7 +184,7 @@ export const MembersTable: React.FC<MembersTableProps> = ({
                         {dueDate.toLocaleDateString()}
                       </div>
                       <div className="text-[11px] text-gym-muted">
-                        ${m.feeAmount.toFixed(2)} / mo
+                        ₹{m.feeAmount.toLocaleString('en-IN')} / mo
                       </div>
                     </td>
 
@@ -231,7 +231,7 @@ export const MembersTable: React.FC<MembersTableProps> = ({
                           title="Log Fee Payment"
                           className="p-1.5 rounded-lg bg-gym-plate hover:bg-gym-green hover:text-white text-gym-subtext border border-gym-border transition-colors"
                         >
-                          <DollarSign className="w-4 h-4" />
+                          <IndianRupee className="w-4 h-4" />
                         </button>
                         <Link
                           to={`/staff/members/${m.id}`}

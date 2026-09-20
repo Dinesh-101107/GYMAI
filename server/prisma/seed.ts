@@ -82,7 +82,7 @@ async function main() {
       name: 'Alex Hunter',
       phone: '+91 98765 43210',
       status: 'active',
-      feeAmount: 65.0,
+      feeAmount: 2500.0,
       feeDueOffset: 14, // due in 14 days
       lastPaymentOffset: -16,
       attendanceType: 'regular_high', // 4x a week consistent
@@ -92,7 +92,7 @@ async function main() {
       name: 'Jordan Reed',
       phone: '+91 98234 56789',
       status: 'active',
-      feeAmount: 55.0,
+      feeAmount: 2000.0,
       feeDueOffset: 8,
       lastPaymentOffset: -22,
       attendanceType: 'drop_risk', // Was 4x/wk, dropped to 0-1x in trailing 2 weeks! >40% drop
@@ -102,7 +102,7 @@ async function main() {
       name: 'Marcus Vance',
       phone: '+91 97123 45678',
       status: 'active',
-      feeAmount: 75.0,
+      feeAmount: 3000.0,
       feeDueOffset: 12,
       lastPaymentOffset: -18,
       attendanceType: 'evening_powerlifter', // strictly Tue & Thu 18:30
@@ -112,7 +112,7 @@ async function main() {
       name: 'Elena Rostova',
       phone: '+91 99876 54321',
       status: 'active',
-      feeAmount: 60.0,
+      feeAmount: 2000.0,
       feeDueOffset: 2, // DUE IN 2 DAYS! Trigger reminder
       lastPaymentOffset: -28,
       attendanceType: 'regular_moderate',
@@ -122,7 +122,7 @@ async function main() {
       name: 'Samira Khan',
       phone: '+91 98450 12345',
       status: 'expired',
-      feeAmount: 50.0,
+      feeAmount: 1500.0,
       feeDueOffset: -4, // EXPIRED 4 DAYS AGO!
       lastPaymentOffset: -34,
       attendanceType: 'inactive',
@@ -132,7 +132,7 @@ async function main() {
       name: 'David Chen',
       phone: '+91 91234 56789',
       status: 'active',
-      feeAmount: 55.0,
+      feeAmount: 2000.0,
       feeDueOffset: 20,
       lastPaymentOffset: -10,
       attendanceType: 'morning_warrior', // 6:00 AM check-ins
@@ -142,7 +142,7 @@ async function main() {
       name: 'Priya Patel',
       phone: '+91 98901 23456',
       status: 'frozen',
-      feeAmount: 50.0,
+      feeAmount: 1800.0,
       feeDueOffset: 30,
       lastPaymentOffset: -60,
       attendanceType: 'none',
@@ -152,7 +152,7 @@ async function main() {
       name: 'Liam O\'Connor',
       phone: '+91 97654 32109',
       status: 'active',
-      feeAmount: 70.0,
+      feeAmount: 2500.0,
       feeDueOffset: 16,
       lastPaymentOffset: -14,
       attendanceType: 'recent_new', // joined 2 weeks ago
@@ -162,7 +162,7 @@ async function main() {
       name: 'Zoe Martinez',
       phone: '+91 98111 22334',
       status: 'active',
-      feeAmount: 85.0,
+      feeAmount: 3500.0,
       feeDueOffset: 5, // Due in 5 days
       lastPaymentOffset: -25,
       attendanceType: 'high_consistency',
@@ -172,7 +172,7 @@ async function main() {
       name: 'Lucas Silva',
       phone: '+91 99223 34455',
       status: 'active',
-      feeAmount: 60.0,
+      feeAmount: 2200.0,
       feeDueOffset: 18,
       lastPaymentOffset: -12,
       attendanceType: 'weekend_warrior',
@@ -387,7 +387,7 @@ async function main() {
       data: {
         memberId: elena.id,
         channel: 'email' as any,
-        message: 'Hey Elena! Just a quick heads-up: your GymMate membership renews in 2 days ($60.00). Tap here to keep your workouts rolling.',
+        message: 'Hey Elena! Just a quick heads-up: your GymMate membership renews in 2 days (₹2,000). Tap here to keep your workouts rolling.',
         status: 'sent' as any,
       },
     });

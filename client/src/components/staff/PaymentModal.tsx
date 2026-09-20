@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Member } from '../../types/index.js';
 import api from '../../services/api.js';
-import { X, DollarSign, CheckCircle2, AlertCircle } from 'lucide-react';
+import { X, IndianRupee, CheckCircle2, AlertCircle } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 interface PaymentModalProps {
@@ -66,7 +66,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
         <div className="flex items-center space-x-3 mb-4">
           <div className="w-10 h-10 rounded-xl bg-gym-green/20 border border-gym-green/40 text-gym-greenBright flex items-center justify-center">
-            <DollarSign className="w-5 h-5" />
+            <IndianRupee className="w-5 h-5" />
           </div>
           <div>
             <h3 className="text-lg font-bold text-white tracking-wide">
@@ -90,7 +90,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
           <div className="flex justify-between text-sm">
             <span className="text-gym-muted">Monthly Rate:</span>
             <span className="font-mono text-xs text-gym-greenBright font-bold">
-              ${member.feeAmount.toFixed(2)}
+              ₹{member.feeAmount.toLocaleString('en-IN')}
             </span>
           </div>
         </div>
@@ -121,7 +121,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
         <div className="flex items-center justify-between p-3 rounded-lg bg-gym-darkest border border-gym-border/80 mb-5">
           <span className="text-xs font-bold text-gym-muted uppercase">Total Paid:</span>
           <span className="font-display text-2xl text-gym-greenBright tracking-wider">
-            ${totalAmount}
+            ₹{Number(totalAmount).toLocaleString('en-IN')}
           </span>
         </div>
 

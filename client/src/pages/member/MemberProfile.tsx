@@ -105,7 +105,7 @@ export const MemberProfile: React.FC = () => {
         </div>
 
         <div className="text-right font-mono text-xs text-gym-muted">
-          <span className="block text-white font-bold">${member.feeAmount.toFixed(2)}/mo</span>
+          <span className="block text-white font-bold">₹{member.feeAmount.toLocaleString('en-IN')}/mo</span>
           <span>Renewal: {new Date(member.feeDueDate).toLocaleDateString()}</span>
         </div>
       </PlateCard>

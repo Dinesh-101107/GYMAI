@@ -36,7 +36,7 @@ export function generateReminderCopy(
   reason: 'fee_due_soon' | 'fee_overdue' | 'inactivity_gap'
 ): string {
   const firstName = member.name.split(' ')[0] || 'Friend';
-  const amountStr = member.feeAmount ? `$${member.feeAmount.toFixed(2)}` : 'your membership fee';
+  const amountStr = member.feeAmount ? `₹${member.feeAmount.toLocaleString('en-IN')}` : 'your membership fee';
 
   switch (reason) {
     case 'fee_due_soon':

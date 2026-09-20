@@ -78,7 +78,7 @@ export async function login(req: Request, res: Response): Promise<void> {
 
 export async function registerMember(req: Request, res: Response): Promise<void> {
   try {
-    const { email, password, name, phone, feeAmount = 60.0 } = req.body;
+    const { email, password, name, phone, feeAmount = 2000.0 } = req.body;
 
     if (!email || !password || !name) {
       res.status(400).json({ error: 'Email, password, and full name are required.' });

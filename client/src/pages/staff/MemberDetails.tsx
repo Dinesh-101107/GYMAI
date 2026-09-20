@@ -10,7 +10,7 @@ import ManualCheckInModal from '../../components/staff/ManualCheckInModal.js';
 import {
   ArrowLeft,
   Calendar,
-  DollarSign,
+  IndianRupee,
   QrCode,
   Sparkles,
   Clock,
@@ -110,7 +110,7 @@ export const MemberDetails: React.FC = () => {
             onClick={() => setIsPaymentModalOpen(true)}
             className="inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-gym-green hover:bg-emerald-600 text-white text-xs font-bold tracking-wide transition-colors shadow-glow-green"
           >
-            <DollarSign className="w-4 h-4" />
+            <IndianRupee className="w-4 h-4" />
             <span>LOG PAYMENT</span>
           </button>
         </div>
@@ -138,7 +138,7 @@ export const MemberDetails: React.FC = () => {
           <div className="pt-4 border-t border-gym-border space-y-2">
             <div className="flex justify-between text-xs">
               <span className="text-gym-muted">Monthly Fee:</span>
-              <span className="font-bold text-white">${member.feeAmount.toFixed(2)}</span>
+              <span className="font-bold text-white">₹{member.feeAmount.toLocaleString('en-IN')}</span>
             </div>
             <div className="flex justify-between text-xs">
               <span className="text-gym-muted">Fee Due Date:</span>

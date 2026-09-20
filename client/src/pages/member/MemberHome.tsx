@@ -13,7 +13,7 @@ import {
   ScanLine,
   Calendar,
   Sparkles,
-  DollarSign,
+  IndianRupee,
   ArrowRight,
   Clock,
   Award,
@@ -132,12 +132,12 @@ export const MemberHome: React.FC = () => {
               <span className="text-xs font-bold uppercase tracking-wider text-gym-muted">
                 MEMBERSHIP STATUS
               </span>
-              <DollarSign className="w-5 h-5 text-gym-greenBright" />
+              <IndianRupee className="w-5 h-5 text-gym-greenBright" />
             </div>
 
             <div className="flex items-baseline space-x-2">
               <span className="font-display text-4xl text-white leading-none">
-                ${member.feeAmount.toFixed(2)}
+                ₹{member.feeAmount.toLocaleString('en-IN')}
               </span>
               <span className="text-xs text-gym-muted font-mono">/ month</span>
             </div>

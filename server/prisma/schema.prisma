@@ -31,7 +31,7 @@ model Member {
   phone            String?          @default("")
   membershipStatus String           @default("active")
   joinDate         DateTime         @default(now())
-  feeAmount        Float            @default(50.0)
+  feeAmount        Float            @default(2000.0)
   feeDueDate       DateTime
   lastPaymentDate  DateTime?
   avatarUrl        String?
