@@ -1,0 +1,165 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  STAFF
+  MEMBER
+}
+
+enum MembershipStatus {
+  active
+  expired
+  frozen
+}
+
+enum ReminderChannel {
+  email
+  sms
+  in_app
+}
+
+enum ReminderStatus {
+  pending
+  sent
+  failed
+}
+
+enum BookingStatus {
+  confirmed
+  cancelled
+}
+
+model User {
+  id                   String    @id @default(uuid())
+  email                String    @unique
+  passwordHash         String
+  role                 Role      @default(MEMBER)
+  isEmailVerified      Boolean   @default(false)
+  verificationToken    String?
+  resetPasswordToken   String?
+  resetPasswordExpires DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  member               Member?
+  staff                Staff?
+}
+
+model Member {
+  id               String           @id @default(uuid())
+  userId           String           @unique
+  user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name             String
+  phone            String
+  membershipStatus MembershipStatus @default(active)
+  joinDate         DateTime         @default(now())
+  feeAmount        Float            @default(50.0)
+  feeDueDate       DateTime
+  lastPaymentDate  DateTime?
+  avatarUrl        String?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  attendanceLogs   AttendanceLog[]
+  feeReminders     FeeReminder[]
+  aiInsights       AIInsight[]
+  bookings         Booking[]
+
+  @@index([membershipStatus])
+  @@index([feeDueDate])
+}
+
+model Staff {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  designation String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model AttendanceLog {
+  id           String    @id @default(uuid())
+  memberId     String
+  member       Member    @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  checkInTime  DateTime  @default(now())
+  checkOutTime DateTime?
+  date         DateTime  @default(now())
+
+  @@index([memberId])
+  @@index([date])
+}
+
+model FeeReminder {
+  id        String          @id @default(uuid())
+  memberId  String
+  member    Member          @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  sentAt    DateTime        @default(now())
+  channel   ReminderChannel @default(email)
+  message   String
+  status    ReminderStatus  @default(sent)
+
+  @@index([memberId])
+}
+
+model AIInsight {
+  id              String   @id @default(uuid())
+  memberId        String
+  member          Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  type            String   // 'drop_risk' | 'optimal_time' | 'high_consistency'
+  observation     String
+  suggestedAction String
+  confidence      Float    // 0.0 - 1.0
+  createdAt       DateTime @default(now())
+
+  @@index([memberId])
+}
+
+model ClassSlot {
+  id          String    @id @default(uuid())
+  name        String
+  capacity    Int
+  bookedCount Int       @default(0)
+  startTime   DateTime
+  endTime     DateTime
+  version     Int       @default(0) // For optimistic locking
+  category    String    @default("Strength & HIIT")
+  instructor  String    @default("Coach Marcus")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  bookings    Booking[]
+}
+
+model Booking {
+  id        String        @id @default(uuid())
+  memberId  String
+  member    Member        @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  slotId    String
+  slot      ClassSlot     @relation(fields: [slotId], references: [id], onDelete: Cascade)
+  status    BookingStatus @default(confirmed)
+  version   Int           @default(0) // Optimistic locking version
+  bookedAt  DateTime      @default(now())
+
+  @@unique([memberId, slotId])
+  @@index([memberId])
+  @@index([slotId])
+}
+
+model GymSettings {
+  id                           String   @id @default("default")
+  gymName                      String   @default("Iron & Plate GymMate AI")
+  reminderLeadTimeDays         Int      @default(5)
+  billingCycle                 String   @default("monthly")
+  attendanceDropThreshold      Int      @default(40)
+  inactivityThresholdDays      Int      @default(10)
+  autoRemindersEnabled         Boolean  @default(true)
+  updatedAt                    DateTime @updatedAt
+}

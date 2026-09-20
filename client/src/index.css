@@ -1,0 +1,118 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #0A0A0C;
+    color: #F1F1F4;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  h1, h2, h3, .font-display {
+    font-family: 'Bebas Neue', 'Oswald', sans-serif;
+    letter-spacing: 0.05em;
+  }
+}
+
+@layer components {
+  /* Weight-plate inspired card styling with subtle plate edge */
+  .plate-card {
+    background: #151518;
+    border: 1px solid #282830;
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .plate-card:hover {
+    border-color: #383844;
+  }
+
+  .plate-card-accent-red {
+    border-bottom: 3px solid #E63946;
+  }
+
+  .plate-card-accent-green {
+    border-bottom: 3px solid #2E8B57;
+  }
+
+  .plate-card-accent-gold {
+    border-bottom: 3px solid #E09F3E;
+  }
+
+  /* Gym chalk-board tag styling */
+  .chalk-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.2rem 0.65rem;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .chalk-tag-active {
+    background-color: rgba(46, 139, 87, 0.18);
+    color: #4ade80;
+    border-color: rgba(74, 222, 128, 0.35);
+  }
+
+  .chalk-tag-expired {
+    background-color: rgba(230, 57, 70, 0.18);
+    color: #f87171;
+    border-color: rgba(248, 113, 113, 0.35);
+  }
+
+  .chalk-tag-frozen {
+    background-color: rgba(224, 159, 62, 0.18);
+    color: #fbbf24;
+    border-color: rgba(251, 191, 36, 0.35);
+  }
+
+  /* Barbell load rack animation */
+  .barbell-bar {
+    height: 6px;
+    background: #383844;
+    border-radius: 3px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .barbell-weight {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 35%;
+    background: linear-gradient(90deg, #E63946, #FF6B6B);
+    border-radius: 3px;
+    animation: barbell-slide 1.4s ease-in-out infinite;
+  }
+
+  @keyframes barbell-slide {
+    0% { left: -35%; }
+    50% { left: 45%; }
+    100% { left: 100%; }
+  }
+}
+
+/* Custom modern dark scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0F0F12;
+}
+::-webkit-scrollbar-thumb {
+  background: #282832;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3A3A48;
+}
