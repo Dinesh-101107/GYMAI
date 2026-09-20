@@ -27,7 +27,7 @@ export async function getCandidates(req: Request, res: Response): Promise<void> 
           id: m.id,
           name: m.name,
           email: m.user.email,
-          phone: m.phone,
+          phone: m.phone || undefined,
           feeAmount: m.feeAmount,
           feeDueDate: m.feeDueDate,
           membershipStatus: m.membershipStatus,

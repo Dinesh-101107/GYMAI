@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useSocket } from '../../context/SocketContext.js';
 import api from '../../services/api.js';
 import ChalkBadge from '../common/ChalkBadge.js';
-import { formatIndianPhone } from '../../utils/phone.js';
 import { QrCode, UserCheck, Radio, Wifi, WifiOff } from 'lucide-react';
 
 interface FeedItem {
@@ -11,7 +10,6 @@ interface FeedItem {
   memberName: string;
   checkInTime: string;
   membershipStatus: string;
-  phone?: string;
   method?: 'QR_SCAN' | 'MANUAL';
 }
 
@@ -31,7 +29,6 @@ export const LiveCheckInFeed: React.FC = () => {
           memberName: l.member.name,
           checkInTime: l.checkInTime,
           membershipStatus: l.member.membershipStatus,
-          phone: l.member.phone,
           method: 'QR_SCAN',
         }));
         setFeed(formatted);
@@ -134,10 +131,8 @@ export const LiveCheckInFeed: React.FC = () => {
                       <ChalkBadge status={item.membershipStatus} size="sm" />
                     </div>
                     <div className="text-[11px] text-gym-muted flex items-center space-x-2">
-                      <span className="font-mono">{formatIndianPhone(item.phone)}</span>
-                      <span>·</span>
                       <span className="uppercase text-[10px] font-bold text-zinc-400">
-                        {item.method === 'MANUAL' ? 'Desk Manual' : 'QR Scan'}
+                        {item.method === 'MANUAL' ? 'Desk Manual Check-In' : 'QR Scan Check-In'}
                       </span>
                     </div>
                   </div>

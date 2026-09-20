@@ -28,7 +28,7 @@ model Member {
   userId           String           @unique
   user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   name             String
-  phone            String
+  phone            String?          @default("")
   membershipStatus String           @default("active")
   joinDate         DateTime         @default(now())
   feeAmount        Float            @default(50.0)

@@ -80,8 +80,8 @@ export async function registerMember(req: Request, res: Response): Promise<void>
   try {
     const { email, password, name, phone, feeAmount = 60.0 } = req.body;
 
-    if (!email || !password || !name || !phone) {
-      res.status(400).json({ error: 'Email, password, full name, and phone number are required.' });
+    if (!email || !password || !name) {
+      res.status(400).json({ error: 'Email, password, and full name are required.' });
       return;
     }
 
@@ -111,7 +111,7 @@ export async function registerMember(req: Request, res: Response): Promise<void>
         member: {
           create: {
             name: name.trim(),
-            phone: phone.trim(),
+            phone: phone ? phone.trim() : '',
             membershipStatus: 'active' as any,
             feeAmount: Number(feeAmount),
             feeDueDate: nextDueDate,

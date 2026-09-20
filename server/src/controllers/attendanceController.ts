@@ -93,7 +93,7 @@ export async function memberScanCheckIn(req: Request, res: Response): Promise<vo
       memberName: member.name,
       checkInTime: log.checkInTime,
       membershipStatus: member.membershipStatus,
-      phone: member.phone,
+      phone: member.phone || undefined,
       method: 'QR_SCAN',
     });
 
@@ -166,7 +166,7 @@ export async function manualCheckIn(req: Request, res: Response): Promise<void> 
       memberName: member.name,
       checkInTime: log.checkInTime,
       membershipStatus: member.membershipStatus,
-      phone: member.phone,
+      phone: member.phone || undefined,
       method: 'MANUAL',
     });
 

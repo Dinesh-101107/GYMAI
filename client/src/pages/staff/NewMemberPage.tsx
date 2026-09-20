@@ -2,13 +2,11 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../../services/api.js';
 import PlateCard from '../../components/common/PlateCard.js';
-import IndianPhoneInput from '../../components/common/IndianPhoneInput.js';
 import { ArrowLeft, UserPlus, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 export const NewMemberPage: React.FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
   const [feeAmount, setFeeAmount] = useState('60');
   const [membershipStatus, setMembershipStatus] = useState('active');
   const [password, setPassword] = useState('MemberPass123!');
@@ -19,14 +17,8 @@ export const NewMemberPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !email || !phone) {
-      setError('Name, email, and phone number are required.');
-      return;
-    }
-
-    const digits = phone.replace(/\D/g, '').replace(/^91/, '');
-    if (digits.length !== 10 || !/^[6-9]/.test(digits)) {
-      setError('Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9.');
+    if (!name || !email) {
+      setError('Name and email are required.');
       return;
     }
 
@@ -36,7 +28,6 @@ export const NewMemberPage: React.FC = () => {
       const res = await api.post('/members', {
         name,
         email,
-        phone,
         feeAmount: Number(feeAmount),
         membershipStatus,
         password,
@@ -95,28 +86,17 @@ export const NewMemberPage: React.FC = () => {
 
             <div>
               <label className="block text-xs font-bold text-gym-subtext uppercase tracking-wider mb-1.5">
-                Mobile Number (Indian +91)
+                Email Address (Login Username)
               </label>
-              <IndianPhoneInput
-                value={phone}
-                onChange={setPhone}
+              <input
+                type="email"
                 required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="elena@example.com"
+                className="w-full px-3.5 py-2.5 bg-gym-darkest border border-gym-border rounded-xl text-sm text-white placeholder-gym-muted focus:outline-none focus:border-gym-red"
               />
             </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-bold text-gym-subtext uppercase tracking-wider mb-1.5">
-              Email Address (Login Username)
-            </label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="elena@example.com"
-              className="w-full px-3.5 py-2.5 bg-gym-darkest border border-gym-border rounded-xl text-sm text-white placeholder-gym-muted focus:outline-none focus:border-gym-red"
-            />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

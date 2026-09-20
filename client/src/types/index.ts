@@ -17,7 +17,7 @@ export interface Member {
   userId: string;
   name: string;
   email?: string;
-  phone: string;
+  phone?: string;
   membershipStatus: MembershipStatus;
   feeAmount: number;
   feeDueDate: string;
@@ -53,7 +53,7 @@ export interface AttendanceLog {
     id: string;
     name: string;
     membershipStatus: MembershipStatus;
-    phone: string;
+    phone?: string;
   };
 }
 
@@ -67,7 +67,7 @@ export interface FeeReminder {
   member?: {
     id: string;
     name: string;
-    phone: string;
+    phone?: string;
     membershipStatus: MembershipStatus;
   };
 }

@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.js';
-import IndianPhoneInput from '../../components/common/IndianPhoneInput.js';
 import { Dumbbell, AlertCircle, ArrowRight, ShieldCheck } from 'lucide-react';
 
 export const RegisterPage: React.FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -16,14 +14,8 @@ export const RegisterPage: React.FC = () => {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !email || !phone || !password) {
+    if (!name || !email || !password) {
       setError('All fields are required.');
-      return;
-    }
-
-    const digits = phone.replace(/\D/g, '').replace(/^91/, '');
-    if (digits.length !== 10 || !/^[6-9]/.test(digits)) {
-      setError('Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9.');
       return;
     }
 
@@ -33,7 +25,6 @@ export const RegisterPage: React.FC = () => {
       await register({
         name,
         email,
-        phone,
         password,
         feeAmount: 60.0,
       });
@@ -95,17 +86,6 @@ export const RegisterPage: React.FC = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="marcus@example.com"
                 className="w-full px-3.5 py-2.5 bg-gym-darkest border border-gym-border rounded-xl text-sm text-white placeholder-gym-muted focus:outline-none focus:border-gym-red"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-gym-subtext uppercase tracking-wider mb-1">
-                Mobile Number (Indian +91)
-              </label>
-              <IndianPhoneInput
-                value={phone}
-                onChange={setPhone}
-                required
               />
             </div>
 

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Member } from '../../types/index.js';
 import ChalkBadge from '../common/ChalkBadge.js';
-import { formatIndianPhone } from '../../utils/phone.js';
 import { Search, ArrowUpDown, ChevronRight, DollarSign, QrCode, AlertCircle } from 'lucide-react';
 
 interface MembersTableProps {
@@ -25,7 +24,6 @@ export const MembersTable: React.FC<MembersTableProps> = ({
   const filtered = members.filter((m) => {
     const matchesSearch =
       m.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      m.phone.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (m.email && m.email.toLowerCase().includes(searchTerm.toLowerCase()));
 
     if (!matchesSearch) return false;
@@ -73,7 +71,7 @@ export const MembersTable: React.FC<MembersTableProps> = ({
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gym-muted" />
           <input
             type="text"
-            placeholder="Search by name, phone, email..."
+            placeholder="Search by name, email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-4 py-2 bg-gym-darkest border border-gym-border rounded-lg text-sm text-white placeholder-gym-muted focus:outline-none focus:border-gym-red"
@@ -170,7 +168,7 @@ export const MembersTable: React.FC<MembersTableProps> = ({
                         </div>
                         <div>
                           <div>{m.name}</div>
-                          <div className="text-xs text-gym-muted font-mono">{formatIndianPhone(m.phone)}</div>
+                          {m.email && <div className="text-xs text-gym-muted">{m.email}</div>}
                         </div>
                       </Link>
                     </td>

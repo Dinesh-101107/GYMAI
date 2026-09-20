@@ -117,8 +117,8 @@ export async function createMember(req: Request, res: Response): Promise<void> {
   try {
     const { email, name, phone, feeAmount = 60, membershipStatus = 'active', password } = req.body;
 
-    if (!email || !name || !phone) {
-      res.status(400).json({ error: 'Email, name, and phone are required.' });
+    if (!email || !name) {
+      res.status(400).json({ error: 'Email and name are required.' });
       return;
     }
 
@@ -146,7 +146,7 @@ export async function createMember(req: Request, res: Response): Promise<void> {
         member: {
           create: {
             name: name.trim(),
-            phone: phone.trim(),
+            phone: phone ? phone.trim() : '',
             feeAmount: Number(feeAmount),
             membershipStatus: membershipStatus as any,
             feeDueDate: nextDueDate,

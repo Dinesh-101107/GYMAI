@@ -5,13 +5,11 @@ import { Member } from '../../types/index.js';
 import PlateCard from '../../components/common/PlateCard.js';
 import ChalkBadge from '../../components/common/ChalkBadge.js';
 import BarbellLoader from '../../components/common/BarbellLoader.js';
-import IndianPhoneInput from '../../components/common/IndianPhoneInput.js';
-import { User, Phone, Mail, Lock, CheckCircle2, AlertCircle, Save } from 'lucide-react';
+import { User, Mail, Lock, CheckCircle2, AlertCircle, Save } from 'lucide-react';
 
 export const MemberProfile: React.FC = () => {
   const { user } = useAuth();
   const [member, setMember] = useState<Member | null>(null);
-  const [phone, setPhone] = useState('');
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -25,7 +23,6 @@ export const MemberProfile: React.FC = () => {
         const res = await api.get(`/members/${user.memberId}`);
         setMember(res.data);
         setName(res.data.name);
-        setPhone(res.data.phone);
       } catch (e) {
         console.error('Failed to load profile', e);
       } finally {
@@ -42,7 +39,7 @@ export const MemberProfile: React.FC = () => {
     try {
       setSaving(true);
       setStatusMessage(null);
-      await api.put(`/members/${member.id}`, { name, phone });
+      await api.put(`/members/${member.id}`, { name });
       setStatusMessage({ type: 'success', text: 'Profile details updated successfully!' });
     } catch (err: any) {
       setStatusMessage({
@@ -145,17 +142,6 @@ export const MemberProfile: React.FC = () => {
               disabled
               value={member.email || user?.email || ''}
               className="w-full px-3.5 py-2.5 bg-gym-plate/50 border border-gym-border rounded-xl text-sm text-gym-muted cursor-not-allowed"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-bold text-gym-subtext uppercase tracking-wider mb-1">
-              Mobile Number (Indian +91)
-            </label>
-            <IndianPhoneInput
-              value={phone}
-              onChange={setPhone}
-              required
             />
           </div>
 
