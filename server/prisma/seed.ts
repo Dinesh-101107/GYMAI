@@ -80,7 +80,7 @@ async function main() {
     {
       email: 'alex@gymmate.ai',
       name: 'Alex Hunter',
-      phone: '+1 (555) 234-5678',
+      phone: '+91 98765 43210',
       status: 'active',
       feeAmount: 65.0,
       feeDueOffset: 14, // due in 14 days
@@ -90,7 +90,7 @@ async function main() {
     {
       email: 'jordan@gymmate.ai',
       name: 'Jordan Reed',
-      phone: '+1 (555) 345-6789',
+      phone: '+91 98234 56789',
       status: 'active',
       feeAmount: 55.0,
       feeDueOffset: 8,
@@ -100,7 +100,7 @@ async function main() {
     {
       email: 'marcus@gymmate.ai',
       name: 'Marcus Vance',
-      phone: '+1 (555) 456-7890',
+      phone: '+91 97123 45678',
       status: 'active',
       feeAmount: 75.0,
       feeDueOffset: 12,
@@ -110,7 +110,7 @@ async function main() {
     {
       email: 'elena@gymmate.ai',
       name: 'Elena Rostova',
-      phone: '+1 (555) 567-8901',
+      phone: '+91 99876 54321',
       status: 'active',
       feeAmount: 60.0,
       feeDueOffset: 2, // DUE IN 2 DAYS! Trigger reminder
@@ -120,7 +120,7 @@ async function main() {
     {
       email: 'samira@gymmate.ai',
       name: 'Samira Khan',
-      phone: '+1 (555) 678-9012',
+      phone: '+91 98450 12345',
       status: 'expired',
       feeAmount: 50.0,
       feeDueOffset: -4, // EXPIRED 4 DAYS AGO!
@@ -130,7 +130,7 @@ async function main() {
     {
       email: 'david@gymmate.ai',
       name: 'David Chen',
-      phone: '+1 (555) 789-0123',
+      phone: '+91 91234 56789',
       status: 'active',
       feeAmount: 55.0,
       feeDueOffset: 20,
@@ -140,7 +140,7 @@ async function main() {
     {
       email: 'priya@gymmate.ai',
       name: 'Priya Patel',
-      phone: '+1 (555) 890-1234',
+      phone: '+91 98901 23456',
       status: 'frozen',
       feeAmount: 50.0,
       feeDueOffset: 30,
@@ -150,7 +150,7 @@ async function main() {
     {
       email: 'liam@gymmate.ai',
       name: 'Liam O\'Connor',
-      phone: '+1 (555) 901-2345',
+      phone: '+91 97654 32109',
       status: 'active',
       feeAmount: 70.0,
       feeDueOffset: 16,
@@ -160,7 +160,7 @@ async function main() {
     {
       email: 'zoe@gymmate.ai',
       name: 'Zoe Martinez',
-      phone: '+1 (555) 112-2334',
+      phone: '+91 98111 22334',
       status: 'active',
       feeAmount: 85.0,
       feeDueOffset: 5, // Due in 5 days
@@ -170,7 +170,7 @@ async function main() {
     {
       email: 'lucas@gymmate.ai',
       name: 'Lucas Silva',
-      phone: '+1 (555) 223-3445',
+      phone: '+91 99223 34455',
       status: 'active',
       feeAmount: 60.0,
       feeDueOffset: 18,

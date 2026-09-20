@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.js';
-import { Dumbbell, ShieldCheck, AlertCircle, ArrowRight, User } from 'lucide-react';
+import { Dumbbell, AlertCircle, ArrowRight } from 'lucide-react';
 
 export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -34,12 +34,6 @@ export const LoginPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const fillDemoAccount = (demoEmail: string, demoPass: string) => {
-    setEmail(demoEmail);
-    setPassword(demoPass);
-    setError(null);
   };
 
   return (
@@ -116,53 +110,6 @@ export const LoginPage: React.FC = () => {
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>
-
-          {/* Quick Demo Logins Section */}
-          <div className="mt-6 pt-6 border-t border-gym-border/70">
-            <div className="flex items-center space-x-2 mb-3">
-              <ShieldCheck className="w-4 h-4 text-gym-red" />
-              <span className="text-xs font-bold uppercase tracking-wider text-gym-subtext">
-                Quick 1-Click Demo Logins
-              </span>
-            </div>
-            <div className="grid grid-cols-1 gap-2">
-              <button
-                type="button"
-                onClick={() => fillDemoAccount('admin@gymmate.ai', 'AdminPass123!')}
-                className="text-left px-3 py-2 rounded-lg bg-gym-plate hover:bg-gym-plate/80 border border-gym-border text-xs text-zinc-300 transition-colors flex items-center justify-between"
-              >
-                <div>
-                  <span className="font-bold text-white">Staff Admin</span> (Sarah Connor - GM)
-                  <div className="text-[10px] text-gym-muted font-mono">admin@gymmate.ai</div>
-                </div>
-                <span className="text-[10px] font-bold text-gym-red uppercase tracking-wider">Use</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => fillDemoAccount('alex@gymmate.ai', 'MemberPass123!')}
-                className="text-left px-3 py-2 rounded-lg bg-gym-plate hover:bg-gym-plate/80 border border-gym-border text-xs text-zinc-300 transition-colors flex items-center justify-between"
-              >
-                <div>
-                  <span className="font-bold text-white">Active Member</span> (Alex Hunter)
-                  <div className="text-[10px] text-gym-muted font-mono">alex@gymmate.ai</div>
-                </div>
-                <span className="text-[10px] font-bold text-gym-greenBright uppercase tracking-wider">Use</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => fillDemoAccount('jordan@gymmate.ai', 'MemberPass123!')}
-                className="text-left px-3 py-2 rounded-lg bg-gym-plate hover:bg-gym-plate/80 border border-gym-border text-xs text-zinc-300 transition-colors flex items-center justify-between"
-              >
-                <div>
-                  <span className="font-bold text-white">At-Risk Member</span> (Jordan Reed - &gt;40% drop)
-                  <div className="text-[10px] text-gym-muted font-mono">jordan@gymmate.ai</div>
-                </div>
-                <span className="text-[10px] font-bold text-gym-amber uppercase tracking-wider">Use</span>
-              </button>
-            </div>
-          </div>
 
           <div className="mt-6 text-center text-xs text-gym-muted">
             New member?{' '}

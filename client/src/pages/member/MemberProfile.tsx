@@ -5,6 +5,7 @@ import { Member } from '../../types/index.js';
 import PlateCard from '../../components/common/PlateCard.js';
 import ChalkBadge from '../../components/common/ChalkBadge.js';
 import BarbellLoader from '../../components/common/BarbellLoader.js';
+import IndianPhoneInput from '../../components/common/IndianPhoneInput.js';
 import { User, Phone, Mail, Lock, CheckCircle2, AlertCircle, Save } from 'lucide-react';
 
 export const MemberProfile: React.FC = () => {
@@ -149,14 +150,12 @@ export const MemberProfile: React.FC = () => {
 
           <div>
             <label className="block text-xs font-bold text-gym-subtext uppercase tracking-wider mb-1">
-              Phone Number
+              Mobile Number (Indian +91)
             </label>
-            <input
-              type="tel"
-              required
+            <IndianPhoneInput
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              className="w-full px-3.5 py-2.5 bg-gym-darkest border border-gym-border rounded-xl text-sm text-white focus:outline-none focus:border-gym-red"
+              onChange={setPhone}
+              required
             />
           </div>
 

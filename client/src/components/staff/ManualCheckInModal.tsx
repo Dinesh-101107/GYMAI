@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Member } from '../../types/index.js';
 import api from '../../services/api.js';
+import { formatIndianPhone } from '../../utils/phone.js';
 import { X, QrCode, CheckCircle2, AlertCircle } from 'lucide-react';
 
 interface ManualCheckInModalProps {
@@ -79,8 +80,8 @@ export const ManualCheckInModal: React.FC<ManualCheckInModalProps> = ({
             </span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-gym-muted">Phone:</span>
-            <span className="font-mono text-xs text-zinc-300">{member.phone}</span>
+            <span className="text-gym-muted">Mobile:</span>
+            <span className="font-mono text-xs text-zinc-300">{formatIndianPhone(member.phone)}</span>
           </div>
         </div>
 

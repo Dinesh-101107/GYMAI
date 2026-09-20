@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../../services/api.js';
 import PlateCard from '../../components/common/PlateCard.js';
+import IndianPhoneInput from '../../components/common/IndianPhoneInput.js';
 import { ArrowLeft, UserPlus, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 export const NewMemberPage: React.FC = () => {
@@ -20,6 +21,12 @@ export const NewMemberPage: React.FC = () => {
     e.preventDefault();
     if (!name || !email || !phone) {
       setError('Name, email, and phone number are required.');
+      return;
+    }
+
+    const digits = phone.replace(/\D/g, '').replace(/^91/, '');
+    if (digits.length !== 10 || !/^[6-9]/.test(digits)) {
+      setError('Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9.');
       return;
     }
 
@@ -88,15 +95,12 @@ export const NewMemberPage: React.FC = () => {
 
             <div>
               <label className="block text-xs font-bold text-gym-subtext uppercase tracking-wider mb-1.5">
-                Phone Number
+                Mobile Number (Indian +91)
               </label>
-              <input
-                type="tel"
-                required
+              <IndianPhoneInput
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="+1 (555) 234-5678"
-                className="w-full px-3.5 py-2.5 bg-gym-darkest border border-gym-border rounded-xl text-sm text-white placeholder-gym-muted focus:outline-none focus:border-gym-red"
+                onChange={setPhone}
+                required
               />
             </div>
           </div>

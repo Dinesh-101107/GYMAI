@@ -4,6 +4,7 @@ import { Member } from '../../types/index.js';
 import LiveCheckInFeed from '../../components/staff/LiveCheckInFeed.js';
 import FrontDeskQRCode from '../../components/staff/FrontDeskQRCode.js';
 import PlateCard from '../../components/common/PlateCard.js';
+import { formatIndianPhone } from '../../utils/phone.js';
 import { QrCode, UserCheck, AlertCircle, CheckCircle2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -118,7 +119,7 @@ export const AttendanceConsole: React.FC = () => {
                   <option value="">-- Select Member --</option>
                   {members.map((m) => (
                     <option key={m.id} value={m.id}>
-                      {m.name} ({m.membershipStatus.toUpperCase()} - {m.phone})
+                      {m.name} ({m.membershipStatus.toUpperCase()} - {formatIndianPhone(m.phone)})
                     </option>
                   ))}
                 </select>

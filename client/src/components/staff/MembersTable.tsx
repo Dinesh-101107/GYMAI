@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Member } from '../../types/index.js';
 import ChalkBadge from '../common/ChalkBadge.js';
+import { formatIndianPhone } from '../../utils/phone.js';
 import { Search, ArrowUpDown, ChevronRight, DollarSign, QrCode, AlertCircle } from 'lucide-react';
 
 interface MembersTableProps {
@@ -169,7 +170,7 @@ export const MembersTable: React.FC<MembersTableProps> = ({
                         </div>
                         <div>
                           <div>{m.name}</div>
-                          <div className="text-xs text-gym-muted font-mono">{m.phone}</div>
+                          <div className="text-xs text-gym-muted font-mono">{formatIndianPhone(m.phone)}</div>
                         </div>
                       </Link>
                     </td>

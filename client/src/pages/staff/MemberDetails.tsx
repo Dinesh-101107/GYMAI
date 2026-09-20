@@ -7,6 +7,7 @@ import ChalkBadge from '../../components/common/ChalkBadge.js';
 import BarbellLoader from '../../components/common/BarbellLoader.js';
 import PaymentModal from '../../components/staff/PaymentModal.js';
 import ManualCheckInModal from '../../components/staff/ManualCheckInModal.js';
+import { formatIndianPhone } from '../../utils/phone.js';
 import {
   ArrowLeft,
   Calendar,
@@ -132,7 +133,7 @@ export const MemberDetails: React.FC = () => {
             </div>
             <div className="flex items-center space-x-2.5 text-gym-subtext">
               <Phone className="w-4 h-4 text-gym-muted" />
-              <span className="font-mono">{member.phone}</span>
+              <span className="font-mono">{formatIndianPhone(member.phone)}</span>
             </div>
             <div className="flex items-center space-x-2.5 text-gym-subtext">
               <Calendar className="w-4 h-4 text-gym-muted" />
