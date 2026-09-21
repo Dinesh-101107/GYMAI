@@ -19,7 +19,7 @@ services:
       - key: JWT_REFRESH_SECRET
         generateValue: true
       - key: CLIENT_URL
-        value: https://gymmate-ai.vercel.app
+        value: https://gymaimaster.netlify.app
 
 databases:
   - name: gymmate-ai-db

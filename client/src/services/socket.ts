@@ -1,11 +1,13 @@
 import { io, Socket } from 'socket.io-client';
 
+const SOCKET_URL = import.meta.env.VITE_API_URL || '/';
+
 let socket: Socket | null = null;
 
 export function getSocket(): Socket {
   if (!socket) {
-    // Connect to current origin in dev/prod
-    socket = io('/', {
+    // Connect to VITE_API_URL in production, or fallback to current origin in dev
+    socket = io(SOCKET_URL, {
       autoConnect: true,
       transports: ['websocket', 'polling'],
       reconnectionAttempts: 5,

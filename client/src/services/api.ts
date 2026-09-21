@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: API_URL ? `${API_URL}/api` : '/api',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -35,7 +37,8 @@ api.interceptors.response.use(
 
       if (refreshToken) {
         try {
-          const res = await axios.post('/api/auth/refresh', { refreshToken });
+          const refreshEndpoint = API_URL ? `${API_URL}/api/auth/refresh` : '/api/auth/refresh';
+          const res = await axios.post(refreshEndpoint, { refreshToken });
           const newAccessToken = res.data.accessToken;
 
           localStorage.setItem('gymmate_access_token', newAccessToken);
