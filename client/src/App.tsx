@@ -10,6 +10,9 @@ import LoginPage from './pages/auth/LoginPage.js';
 import RegisterPage from './pages/auth/RegisterPage.js';
 import ForgotPasswordPage from './pages/auth/ForgotPasswordPage.js';
 
+// Admin Pages
+import AdminDashboard from './pages/admin/AdminDashboard.js';
+
 // Staff Pages
 import StaffDashboard from './pages/staff/StaffDashboard.js';
 import MemberDetails from './pages/staff/MemberDetails.js';
@@ -31,7 +34,9 @@ const AppRoutes: React.FC = () => {
   const RootRedirect = () => {
     if (isLoading) return null;
     if (!isAuthenticated || !user) return <Navigate to="/login" replace />;
-    return <Navigate to={user.role === 'STAFF' ? '/staff/dashboard' : '/member/home'} replace />;
+    if (user.role === 'ADMIN') return <Navigate to="/admin/dashboard" replace />;
+    if (user.role === 'STAFF') return <Navigate to="/staff/dashboard" replace />;
+    return <Navigate to="/member/home" replace />;
   };
 
   return (
@@ -40,18 +45,46 @@ const AppRoutes: React.FC = () => {
       <main className="flex-grow">
         <Routes>
           {/* Public Auth Routes */}
-          <Route path="/login" element={<LoginPage />} />
+          <Route path="/login" element={<LoginPage initialPortal="admin" />} />
+          <Route path="/staff/login" element={<LoginPage initialPortal="staff" />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
           {/* Root Redirect */}
           <Route path="/" element={<RootRedirect />} />
 
-          {/* Staff Portal Routes */}
+          {/* Admin-Only Portal Routes */}
+          <Route
+            path="/admin/dashboard"
+            element={
+              <ProtectedRoute allowedRoles={['ADMIN']}>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/settings"
+            element={
+              <ProtectedRoute allowedRoles={['ADMIN']}>
+                <SettingsPage />
+              </ProtectedRoute>
+            }
+          />
+          {/* Legacy /staff/settings protected strictly to ADMIN */}
+          <Route
+            path="/staff/settings"
+            element={
+              <ProtectedRoute allowedRoles={['ADMIN']}>
+                <SettingsPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Staff Portal Routes (Accessible to STAFF and ADMIN) */}
           <Route
             path="/staff/dashboard"
             element={
-              <ProtectedRoute allowedRoles={['STAFF']}>
+              <ProtectedRoute allowedRoles={['STAFF', 'ADMIN']}>
                 <StaffDashboard />
               </ProtectedRoute>
             }
@@ -59,7 +92,7 @@ const AppRoutes: React.FC = () => {
           <Route
             path="/staff/members/:id"
             element={
-              <ProtectedRoute allowedRoles={['STAFF']}>
+              <ProtectedRoute allowedRoles={['STAFF', 'ADMIN']}>
                 <MemberDetails />
               </ProtectedRoute>
             }
@@ -67,7 +100,7 @@ const AppRoutes: React.FC = () => {
           <Route
             path="/staff/attendance"
             element={
-              <ProtectedRoute allowedRoles={['STAFF']}>
+              <ProtectedRoute allowedRoles={['STAFF', 'ADMIN']}>
                 <AttendanceConsole />
               </ProtectedRoute>
             }
@@ -75,23 +108,15 @@ const AppRoutes: React.FC = () => {
           <Route
             path="/staff/reminders"
             element={
-              <ProtectedRoute allowedRoles={['STAFF']}>
+              <ProtectedRoute allowedRoles={['STAFF', 'ADMIN']}>
                 <RemindersLog />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/staff/settings"
-            element={
-              <ProtectedRoute allowedRoles={['STAFF']}>
-                <SettingsPage />
               </ProtectedRoute>
             }
           />
           <Route
             path="/staff/members/new"
             element={
-              <ProtectedRoute allowedRoles={['STAFF']}>
+              <ProtectedRoute allowedRoles={['STAFF', 'ADMIN']}>
                 <NewMemberPage />
               </ProtectedRoute>
             }
