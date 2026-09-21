@@ -27,8 +27,13 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowe
 
   if (allowedRoles && !allowedRoles.includes(user.role)) {
     // Role mismatch: redirect to their respective primary home
-    const redirectTarget = user.role === 'STAFF' ? '/staff/dashboard' : '/member/home';
-    return <Navigate to={redirectTarget} replace />;
+    let redirectTarget = '/member/home';
+    if (user.role === 'ADMIN') {
+      redirectTarget = '/admin/dashboard';
+    } else if (user.role === 'STAFF') {
+      redirectTarget = '/staff/dashboard';
+    }
+    return <Navigate to={redirectTarget} replace state={{ unauthorized: true, attempted: location.pathname }} />;
   }
 
   return <>{children}</>;

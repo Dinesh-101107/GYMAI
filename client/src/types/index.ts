@@ -1,4 +1,4 @@
-export type Role = 'STAFF' | 'MEMBER';
+export type Role = 'ADMIN' | 'STAFF' | 'MEMBER';
 export type MembershipStatus = 'active' | 'expired' | 'frozen';
 
 export interface User {

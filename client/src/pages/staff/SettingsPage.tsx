@@ -102,11 +102,17 @@ export const SettingsPage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       <div>
+        <div className="flex items-center space-x-2 mb-1.5">
+          <span className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold tracking-widest bg-red-950/80 text-gym-red border border-red-800">
+            <Shield className="w-3.5 h-3.5" />
+            <span>ADMINISTRATOR PRIVILEGED SETTINGS</span>
+          </span>
+        </div>
         <h1 className="font-display text-3xl sm:text-4xl text-white tracking-wide">
           SYSTEM CONFIGURATION & STAFF
         </h1>
         <p className="text-xs sm:text-sm text-gym-muted">
-          Configure automated reminder thresholds, billing cycle parameters, and staff credentials.
+          Configure automated reminder thresholds, billing cycle parameters, and staff employee accounts.
         </p>
       </div>
 
