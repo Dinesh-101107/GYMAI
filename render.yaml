@@ -3,7 +3,7 @@ services:
     name: gymmate-ai-backend
     env: node
     plan: free
-    buildCommand: cd server && npm install && node scripts/use-postgres.js && npx prisma generate && npx prisma db push --accept-data-loss && npm run build
+    buildCommand: cd server && npm install --include=dev && node scripts/use-postgres.js && npx prisma generate && npx prisma db push --accept-data-loss && npm run build
     startCommand: cd server && npm start
     envVars:
       - key: NODE_ENV
