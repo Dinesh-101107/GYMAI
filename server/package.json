@@ -7,11 +7,13 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
+    "build:render": "node scripts/use-postgres.js && prisma generate && prisma db push --accept-data-loss && tsc",
     "start": "node dist/index.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:deploy": "prisma migrate deploy",
     "prisma:push": "prisma db push",
+    "prisma:push:prod": "prisma db push --accept-data-loss",
     "prisma:studio": "prisma studio",
     "switch:sqlite": "node scripts/use-sqlite.js && prisma generate && prisma db push",
     "switch:postgres": "node scripts/use-postgres.js && prisma generate",

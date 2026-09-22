@@ -1,9 +1,13 @@
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
-const root = process.cwd();
-const target = path.join(root, 'prisma', 'schema.prisma');
-const postgresSchema = path.join(root, 'prisma', 'schema.postgres.prisma');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const serverDir = path.resolve(__dirname, '..');
+
+const target = path.join(serverDir, 'prisma', 'schema.prisma');
+const postgresSchema = path.join(serverDir, 'prisma', 'schema.postgres.prisma');
 
 if (fs.existsSync(postgresSchema)) {
   fs.copyFileSync(postgresSchema, target);
