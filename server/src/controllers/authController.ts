@@ -1,7 +1,9 @@
+import 'dotenv/config';
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
+import { OAuth2Client } from 'google-auth-library';
 import prisma from '../config/db.js';
 import { sendEmail } from '../services/emailService.js';
 
@@ -43,6 +45,11 @@ export async function login(req: Request, res: Response): Promise<void> {
 
     if (!user) {
       res.status(401).json({ error: 'Invalid email or password.' });
+      return;
+    }
+
+    if (!user.passwordHash) {
+      res.status(401).json({ error: 'This account was registered using Google. Please sign in with Google.' });
       return;
     }
 
@@ -258,3 +265,173 @@ export async function forgotPassword(req: Request, res: Response): Promise<void>
     res.status(500).json({ error: 'Failed to process password reset request.' });
   }
 }
+
+export async function googleAuth(req: Request, res: Response): Promise<void> {
+  try {
+    const { credential } = req.body;
+
+    if (!credential) {
+      res.status(400).json({ error: 'Google credential token is required.' });
+      return;
+    }
+
+    const googleClientId = process.env.GOOGLE_CLIENT_ID?.trim();
+    if (!googleClientId) {
+      console.error('Google OAuth error: GOOGLE_CLIENT_ID is not configured in process.env');
+      res.status(500).json({ error: 'Google OAuth is not configured on the server (GOOGLE_CLIENT_ID missing).' });
+      return;
+    }
+
+    // Cryptographically verify Google ID Token with Google public keys
+    const client = new OAuth2Client(googleClientId);
+    let ticket;
+    try {
+      ticket = await client.verifyIdToken({
+        idToken: credential,
+        audience: googleClientId,
+      });
+    } catch (verifyError: any) {
+      const msg = verifyError?.message || 'Invalid or expired Google authentication token';
+      console.error('Google token verification failed:', msg);
+      res.status(401).json({ error: `Google verification failed: ${msg}` });
+      return;
+    }
+
+    const payload = ticket.getPayload();
+    if (!payload || !payload.email) {
+      res.status(400).json({ error: 'Google profile incomplete: verified email is required.' });
+      return;
+    }
+
+    // Validate token audience against configured Google Client ID
+    if (payload.aud !== googleClientId) {
+      console.error(`Google token audience mismatch: expected ${googleClientId}, received ${payload.aud}`);
+      res.status(401).json({ error: 'Google token audience mismatch.' });
+      return;
+    }
+
+    // Validate token issuer
+    const validIssuers = ['accounts.google.com', 'https://accounts.google.com'];
+    if (!payload.iss || !validIssuers.includes(payload.iss)) {
+      console.error(`Invalid Google token issuer: ${payload.iss}`);
+      res.status(401).json({ error: 'Invalid Google token issuer.' });
+      return;
+    }
+
+    // Validate verified email
+    const isEmailVerified = payload.email_verified === true || String(payload.email_verified) === 'true';
+    if (!isEmailVerified) {
+      res.status(401).json({ error: 'Google account email is not verified.' });
+      return;
+    }
+
+    const googleId = payload.sub;
+    const email = payload.email.toLowerCase().trim();
+    const name = payload.name || payload.given_name || email.split('@')[0];
+    const picture = payload.picture || null;
+
+    // Search for existing user strictly by verified googleId or verified email
+    let user = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { googleId },
+          { email },
+        ],
+      },
+      include: {
+        member: true,
+        staff: true,
+      },
+    });
+
+    if (user) {
+      // Existing user: PRESERVE existing database role (ADMIN, STAFF, MEMBER)!
+      // Link googleId if missing and mark email verified
+      const updates: any = {};
+      if (!user.googleId) {
+        updates.googleId = googleId;
+      }
+      if (!user.isEmailVerified) {
+        updates.isEmailVerified = true;
+      }
+
+      if (Object.keys(updates).length > 0) {
+        user = await prisma.user.update({
+          where: { id: user.id },
+          data: updates,
+          include: {
+            member: true,
+            staff: true,
+          },
+        });
+      }
+
+      // If user has a member profile and no avatar yet, save the Google photo
+      if (user.member && picture && !user.member.avatarUrl) {
+        await prisma.member.update({
+          where: { id: user.member.id },
+          data: { avatarUrl: picture },
+        });
+      }
+    } else {
+      // New user registration via Google:
+      // STRICT REQUIREMENT: Role MUST strictly be 'MEMBER'.
+      // Never allow Google registration to choose or create ADMIN or STAFF roles.
+      const nextDueDate = new Date();
+      nextDueDate.setDate(nextDueDate.getDate() + 30);
+
+      user = await prisma.user.create({
+        data: {
+          email,
+          googleId,
+          role: 'MEMBER' as any,
+          isEmailVerified: true,
+          member: {
+            create: {
+              name: name.trim(),
+              phone: '',
+              membershipStatus: 'active' as any,
+              feeAmount: 2000.0,
+              feeDueDate: nextDueDate,
+              lastPaymentDate: new Date(),
+              avatarUrl: picture,
+            },
+          },
+        },
+        include: {
+          member: true,
+          staff: true,
+        },
+      });
+
+      // Send welcome email asynchronously
+      sendEmail({
+        to: user.email,
+        subject: 'Welcome to GymMate AI!',
+        html: `<h3>Welcome to the Iron Family, ${name}!</h3><p>Your GymMate AI account has been activated via Google. Log in anytime to access your dashboard and dynamic QR check-in.</p>`,
+      }).catch(console.error);
+    }
+
+    const tokens = generateTokens(user);
+    const resolvedName = user.member?.name || user.staff?.name || user.email.split('@')[0];
+
+    res.json({
+      message: 'Login successful',
+      ...tokens,
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        name: resolvedName,
+        memberId: user.member?.id,
+        staffId: user.staff?.id,
+        membershipStatus: user.member?.membershipStatus,
+        designation: user.staff?.designation,
+      },
+    });
+  } catch (error) {
+    console.error('Google auth error:', error);
+    res.status(500).json({ error: 'Internal server error during Google authentication.' });
+  }
+}
+

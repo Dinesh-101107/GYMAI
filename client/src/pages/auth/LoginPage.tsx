@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, Link, useLocation } from 'react-router-dom';
+import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
 import { useAuth } from '../../context/AuthContext.js';
 import {
   Dumbbell,
@@ -7,9 +8,6 @@ import {
   ArrowRight,
   Shield,
   Briefcase,
-  Sparkles,
-  Lock,
-  UserCheck,
 } from 'lucide-react';
 
 type LoginPortal = 'admin' | 'staff';
@@ -42,7 +40,9 @@ export const LoginPage: React.FC<LoginPageProps> = ({ initialPortal: propPortal 
 
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
+
+  const hasGoogleClientId = Boolean(import.meta.env.VITE_GOOGLE_CLIENT_ID);
 
   // Sync portal with URL or route prop changes (e.g., direct navigation or back/forward)
   useEffect(() => {
@@ -71,20 +71,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ initialPortal: propPortal 
     }
   };
 
-  // Quick 1-click Demo Fillers
-  const fillAdminDemo = () => {
-    setAdminEmail('admin@gymmate.ai');
-    setAdminPassword('AdminPass123!');
-    setError(null);
-  };
-
-  const fillStaffDemo = () => {
-    setStaffEmail('coach@gymmate.ai');
-    setStaffPassword('CoachPass123!');
-    setError(null);
-  };
-
-  // Handler for Admin Login (Existing login workflow kept unchanged)
+  // Real Email/Password Admin & General Login
   const handleAdminLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!adminEmail || !adminPassword) {
@@ -111,7 +98,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ initialPortal: propPortal 
     }
   };
 
-  // Handler for Dedicated Staff Login
+  // Real Email/Password Staff Login
   const handleStaffLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!staffEmail || !staffPassword) {
@@ -137,6 +124,52 @@ export const LoginPage: React.FC<LoginPageProps> = ({ initialPortal: propPortal 
     } finally {
       setLoading(false);
     }
+  };
+
+  // Real Google Sign-In Handler
+  const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
+    if (!credentialResponse.credential) {
+      setError('Google Sign-In did not return a credential token.');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+      const user = await loginWithGoogle(credentialResponse.credential);
+
+      // If user attempted to log in through the staff portal but their role is MEMBER
+      if (portal === 'staff' && user.role === 'MEMBER') {
+        setError('Access Denied: This portal is reserved for Gym Staff. Members please use the Member portal.');
+        return;
+      }
+
+      // Role-based routing preserving existing database permissions
+      if (user.role === 'ADMIN') {
+        navigate('/admin/dashboard');
+      } else if (user.role === 'STAFF') {
+        navigate('/staff/dashboard');
+      } else {
+        navigate('/member/home');
+      }
+    } catch (err: any) {
+      console.error('Google Sign-In Error:', err);
+      const serverError =
+        err.response?.data?.error ||
+        err.response?.data?.message ||
+        (err.code === 'ERR_NETWORK' || !err.response
+          ? 'Unable to connect to backend server. Please verify the backend is running on port 5000.'
+          : null) ||
+        err.message ||
+        'Google authentication failed. Please check your account.';
+      setError(serverError);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleError = () => {
+    setError('Google Sign-In popup closed or failed to initialize. Please try again.');
   };
 
   return (
@@ -225,63 +258,110 @@ export const LoginPage: React.FC<LoginPageProps> = ({ initialPortal: propPortal 
 
           {/* ==================== 1. STAFF LOGIN FORM ==================== */}
           {portal === 'staff' ? (
-            <form onSubmit={handleStaffLogin} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-gym-subtext uppercase tracking-wider mb-1.5">
-                  Staff Email Address
-                </label>
-                <input
-                  type="email"
-                  required
-                  value={staffEmail}
-                  onChange={(e) => setStaffEmail(e.target.value)}
-                  placeholder="coach@gymmate.ai"
-                  className="w-full px-3.5 py-2.5 bg-gym-darkest border border-gym-border rounded-xl text-sm text-white placeholder-gym-muted focus:outline-none focus:border-gym-green"
-                />
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-xs font-bold text-gym-subtext uppercase tracking-wider">
-                    Staff Password
+            <div className="space-y-5">
+              <form onSubmit={handleStaffLogin} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold text-gym-subtext uppercase tracking-wider mb-1.5">
+                    Staff Email Address
                   </label>
-                  <Link
-                    to="/forgot-password"
-                    className="text-xs text-gym-muted hover:text-gym-green transition-colors"
-                  >
-                    Forgot password?
-                  </Link>
+                  <input
+                    type="email"
+                    required
+                    value={staffEmail}
+                    onChange={(e) => setStaffEmail(e.target.value)}
+                    placeholder="coach@gymmate.ai"
+                    className="w-full px-3.5 py-2.5 bg-gym-darkest border border-gym-border rounded-xl text-sm text-white placeholder-gym-muted focus:outline-none focus:border-gym-green"
+                  />
                 </div>
-                <input
-                  type="password"
-                  required
-                  value={staffPassword}
-                  onChange={(e) => setStaffPassword(e.target.value)}
-                  placeholder="••••••••••••"
-                  className="w-full px-3.5 py-2.5 bg-gym-darkest border border-gym-border rounded-xl text-sm text-white placeholder-gym-muted focus:outline-none focus:border-gym-green"
-                />
-              </div>
 
-              {/* 1-Click Demo Fill for Staff */}
-              <div className="pt-1">
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="text-xs font-bold text-gym-subtext uppercase tracking-wider">
+                      Staff Password
+                    </label>
+                    <Link
+                      to="/forgot-password"
+                      className="text-xs text-gym-muted hover:text-gym-green transition-colors"
+                    >
+                      Forgot password?
+                    </Link>
+                  </div>
+                  <input
+                    type="password"
+                    required
+                    value={staffPassword}
+                    onChange={(e) => setStaffPassword(e.target.value)}
+                    placeholder="••••••••••••"
+                    className="w-full px-3.5 py-2.5 bg-gym-darkest border border-gym-border rounded-xl text-sm text-white placeholder-gym-muted focus:outline-none focus:border-gym-green"
+                  />
+                </div>
+
                 <button
-                  type="button"
-                  onClick={fillStaffDemo}
-                  className="w-full py-2 px-3 rounded-lg bg-gym-darkest hover:bg-gym-plate border border-emerald-900/60 text-gym-greenBright text-xs font-semibold flex items-center justify-center space-x-1.5 transition-colors"
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-3 px-4 rounded-xl text-sm font-bold tracking-wider text-white bg-gym-green hover:bg-emerald-600 disabled:opacity-50 transition-all flex items-center justify-center space-x-2 shadow-glow-green"
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-gym-greenBright" />
-                  <span>⚡ Quick Demo Fill: Coach Marcus (coach@gymmate.ai)</span>
+                  <span>{loading ? 'AUTHENTICATING STAFF...' : 'SIGN IN TO STAFF DASHBOARD'}</span>
+                  <ArrowRight className="w-4 h-4" />
                 </button>
+              </form>
+
+              {/* Divider */}
+              <div className="relative my-4">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gym-border" />
+                </div>
+                <div className="relative flex justify-center text-xs">
+                  <span className="bg-gym-card px-3 text-gym-muted font-mono uppercase tracking-wider">
+                    OR
+                  </span>
+                </div>
               </div>
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full py-3 px-4 rounded-xl text-sm font-bold tracking-wider text-white bg-gym-green hover:bg-emerald-600 disabled:opacity-50 transition-all flex items-center justify-center space-x-2 shadow-glow-green mt-2"
-              >
-                <span>{loading ? 'AUTHENTICATING STAFF...' : 'SIGN IN TO STAFF DASHBOARD'}</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
+              {/* Continue with Google */}
+              <div className="flex justify-center w-full">
+                {hasGoogleClientId ? (
+                  <GoogleLogin
+                    onSuccess={handleGoogleSuccess}
+                    onError={handleGoogleError}
+                    theme="filled_black"
+                    shape="rectangular"
+                    size="large"
+                    text="continue_with"
+                    width="360"
+                  />
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setError(
+                        'Google Sign-In is not configured yet. Please set VITE_GOOGLE_CLIENT_ID in client/.env'
+                      )
+                    }
+                    className="w-full py-2.5 px-4 rounded-xl border border-gym-border bg-gym-darkest text-white text-xs font-semibold flex items-center justify-center space-x-2 hover:bg-white/5 transition-colors"
+                  >
+                    <svg className="w-4 h-4" viewBox="0 0 24 24">
+                      <path
+                        fill="#4285F4"
+                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                      />
+                      <path
+                        fill="#34A853"
+                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                      />
+                      <path
+                        fill="#FBBC05"
+                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                      />
+                      <path
+                        fill="#EA4335"
+                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                      />
+                    </svg>
+                    <span>Continue with Google</span>
+                  </button>
+                )}
+              </div>
 
               <div className="pt-2 text-center text-xs text-gym-muted">
                 Need staff credentials? Contact your{' '}
@@ -293,66 +373,113 @@ export const LoginPage: React.FC<LoginPageProps> = ({ initialPortal: propPortal 
                   Gym Administrator
                 </button>
               </div>
-            </form>
+            </div>
           ) : (
             /* ==================== 2. ADMIN / GENERAL LOGIN FORM ==================== */
-            <form onSubmit={handleAdminLogin} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-gym-subtext uppercase tracking-wider mb-1.5">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  required
-                  value={adminEmail}
-                  onChange={(e) => setAdminEmail(e.target.value)}
-                  placeholder="admin@gymmate.ai"
-                  className="w-full px-3.5 py-2.5 bg-gym-darkest border border-gym-border rounded-xl text-sm text-white placeholder-gym-muted focus:outline-none focus:border-gym-red"
-                />
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-xs font-bold text-gym-subtext uppercase tracking-wider">
-                    Password
+            <div className="space-y-5">
+              <form onSubmit={handleAdminLogin} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold text-gym-subtext uppercase tracking-wider mb-1.5">
+                    Email Address
                   </label>
-                  <Link
-                    to="/forgot-password"
-                    className="text-xs text-gym-muted hover:text-gym-red transition-colors"
-                  >
-                    Forgot password?
-                  </Link>
+                  <input
+                    type="email"
+                    required
+                    value={adminEmail}
+                    onChange={(e) => setAdminEmail(e.target.value)}
+                    placeholder="admin@gymmate.ai"
+                    className="w-full px-3.5 py-2.5 bg-gym-darkest border border-gym-border rounded-xl text-sm text-white placeholder-gym-muted focus:outline-none focus:border-gym-red"
+                  />
                 </div>
-                <input
-                  type="password"
-                  required
-                  value={adminPassword}
-                  onChange={(e) => setAdminPassword(e.target.value)}
-                  placeholder="••••••••••••"
-                  className="w-full px-3.5 py-2.5 bg-gym-darkest border border-gym-border rounded-xl text-sm text-white placeholder-gym-muted focus:outline-none focus:border-gym-red"
-                />
-              </div>
 
-              {/* 1-Click Demo Fill for Admin */}
-              <div className="pt-1">
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="text-xs font-bold text-gym-subtext uppercase tracking-wider">
+                      Password
+                    </label>
+                    <Link
+                      to="/forgot-password"
+                      className="text-xs text-gym-muted hover:text-gym-red transition-colors"
+                    >
+                      Forgot password?
+                    </Link>
+                  </div>
+                  <input
+                    type="password"
+                    required
+                    value={adminPassword}
+                    onChange={(e) => setAdminPassword(e.target.value)}
+                    placeholder="••••••••••••"
+                    className="w-full px-3.5 py-2.5 bg-gym-darkest border border-gym-border rounded-xl text-sm text-white placeholder-gym-muted focus:outline-none focus:border-gym-red"
+                  />
+                </div>
+
                 <button
-                  type="button"
-                  onClick={fillAdminDemo}
-                  className="w-full py-2 px-3 rounded-lg bg-gym-darkest hover:bg-gym-plate border border-red-900/60 text-gym-red text-xs font-semibold flex items-center justify-center space-x-1.5 transition-colors"
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-3 px-4 rounded-xl text-sm font-bold tracking-wider text-white bg-gym-red hover:bg-gym-redHover disabled:opacity-50 transition-all flex items-center justify-center space-x-2 shadow-glow-red"
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-gym-red" />
-                  <span>⚡ Quick Demo Fill: Admin Sarah (admin@gymmate.ai)</span>
+                  <span>{loading ? 'AUTHENTICATING...' : 'SIGN IN TO PORTAL'}</span>
+                  <ArrowRight className="w-4 h-4" />
                 </button>
+              </form>
+
+              {/* Divider */}
+              <div className="relative my-4">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gym-border" />
+                </div>
+                <div className="relative flex justify-center text-xs">
+                  <span className="bg-gym-card px-3 text-gym-muted font-mono uppercase tracking-wider">
+                    OR
+                  </span>
+                </div>
               </div>
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full py-3 px-4 rounded-xl text-sm font-bold tracking-wider text-white bg-gym-red hover:bg-gym-redHover disabled:opacity-50 transition-all flex items-center justify-center space-x-2 shadow-glow-red mt-2"
-              >
-                <span>{loading ? 'AUTHENTICATING...' : 'SIGN IN TO PORTAL'}</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
+              {/* Continue with Google */}
+              <div className="flex justify-center w-full">
+                {hasGoogleClientId ? (
+                  <GoogleLogin
+                    onSuccess={handleGoogleSuccess}
+                    onError={handleGoogleError}
+                    theme="filled_black"
+                    shape="rectangular"
+                    size="large"
+                    text="continue_with"
+                    width="360"
+                  />
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setError(
+                        'Google Sign-In is not configured yet. Please set VITE_GOOGLE_CLIENT_ID in client/.env'
+                      )
+                    }
+                    className="w-full py-2.5 px-4 rounded-xl border border-gym-border bg-gym-darkest text-white text-xs font-semibold flex items-center justify-center space-x-2 hover:bg-white/5 transition-colors"
+                  >
+                    <svg className="w-4 h-4" viewBox="0 0 24 24">
+                      <path
+                        fill="#4285F4"
+                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                      />
+                      <path
+                        fill="#34A853"
+                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                      />
+                      <path
+                        fill="#FBBC05"
+                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                      />
+                      <path
+                        fill="#EA4335"
+                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                      />
+                    </svg>
+                    <span>Continue with Google</span>
+                  </button>
+                )}
+              </div>
 
               <div className="mt-4 pt-3 border-t border-gym-border/40 text-center text-xs text-gym-muted flex items-center justify-between">
                 <span>
@@ -372,7 +499,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ initialPortal: propPortal 
                   </Link>
                 </span>
               </div>
-            </form>
+            </div>
           )}
         </div>
       </div>

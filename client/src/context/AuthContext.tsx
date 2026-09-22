@@ -7,6 +7,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, pass: string) => Promise<User>;
+  loginWithGoogle: (credential: string) => Promise<User>;
   register: (data: { email: string; password: string; name: string; phone?: string; feeAmount?: number }) => Promise<User>;
   logout: () => void;
   refreshUserData: () => Promise<void>;
@@ -65,6 +66,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return loggedUser;
   };
 
+  const loginWithGoogle = async (credential: string): Promise<User> => {
+    const res = await api.post('/auth/google', { credential });
+    const { accessToken, refreshToken, user: loggedUser } = res.data;
+
+    localStorage.setItem('gymmate_access_token', accessToken);
+    localStorage.setItem('gymmate_refresh_token', refreshToken);
+    localStorage.setItem('gymmate_user', JSON.stringify(loggedUser));
+
+    setUser(loggedUser);
+    return loggedUser;
+  };
+
   const register = async (data: { email: string; password: string; name: string; phone?: string; feeAmount?: number }): Promise<User> => {
     const res = await api.post('/auth/register', data);
     const { accessToken, refreshToken, user: registeredUser } = res.data;
@@ -112,6 +125,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isAuthenticated: !!user,
         isLoading,
         login,
+        loginWithGoogle,
         register,
         logout,
         refreshUserData,

@@ -183,8 +183,8 @@ export async function updateMember(req: Request, res: Response): Promise<void> {
     if (name) data.name = name;
     if (phone) data.phone = phone;
 
-    // Only staff can adjust membership status or fee fields
-    if (req.user?.role === 'STAFF') {
+    // Only staff or admin can adjust membership status or fee fields
+    if (req.user?.role === 'STAFF' || req.user?.role === 'ADMIN') {
       if (membershipStatus) data.membershipStatus = membershipStatus;
       if (feeAmount !== undefined) data.feeAmount = Number(feeAmount);
       if (feeDueDate) data.feeDueDate = new Date(feeDueDate);

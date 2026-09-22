@@ -13,7 +13,7 @@ const router = Router();
 router.use(requireAuth);
 
 router.get('/slots', getClassSlots);
-router.post('/slots', requireRole('STAFF'), createClassSlot);
+router.post('/slots', requireRole('ADMIN', 'STAFF'), createClassSlot);
 router.post('/book', bookSlot);
 router.delete('/:id', cancelBooking);
 

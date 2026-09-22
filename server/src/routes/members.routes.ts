@@ -13,8 +13,8 @@ const router = Router();
 
 router.use(requireAuth);
 
-router.get('/', requireRole('STAFF'), getMembers);
-router.post('/', requireRole('STAFF'), createMember);
+router.get('/', requireRole('ADMIN', 'STAFF'), getMembers);
+router.post('/', requireRole('ADMIN', 'STAFF'), createMember);
 router.get('/:id', getMemberById); // Permission check in controller
 router.put('/:id', updateMember);
 router.post('/:id/payment', logPayment);

@@ -5,7 +5,8 @@ import { buildInsight } from '../services/aiInsightEngine.js';
 export async function getMemberInsight(req: Request, res: Response): Promise<void> {
   try {
     const { id } = req.params;
-    const targetMemberId = req.user?.role === 'STAFF' ? id : req.user?.memberId;
+    const isStaffOrAdmin = req.user?.role === 'STAFF' || req.user?.role === 'ADMIN';
+    const targetMemberId = isStaffOrAdmin ? id : req.user?.memberId;
 
     if (!targetMemberId) {
       res.status(400).json({ error: 'Member ID required' });

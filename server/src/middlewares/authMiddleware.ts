@@ -5,7 +5,7 @@ import prisma from '../config/db.js';
 export interface AuthUser {
   userId: string;
   email: string;
-  role: 'STAFF' | 'MEMBER';
+  role: 'ADMIN' | 'STAFF' | 'MEMBER';
   memberId?: string;
   staffId?: string;
   name?: string;
@@ -51,7 +51,7 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
     req.user = {
       userId: user.id,
       email: user.email,
-      role: user.role as 'STAFF' | 'MEMBER',
+      role: user.role as 'ADMIN' | 'STAFF' | 'MEMBER',
       memberId: user.member?.id,
       staffId: user.staff?.id,
       name: user.member?.name || user.staff?.name || user.email.split('@')[0],

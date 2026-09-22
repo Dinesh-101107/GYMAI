@@ -1,7 +1,7 @@
+import 'dotenv/config';
 import express from 'express';
 import http from 'http';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import { initSocket } from './socket/index.js';
 import { apiLimiter } from './middlewares/rateLimiter.js';
 
@@ -12,8 +12,6 @@ import staffRoutes from './routes/staff.routes.js';
 import attendanceRoutes from './routes/attendance.routes.js';
 import remindersRoutes from './routes/reminders.routes.js';
 import insightsRoutes from './routes/insights.routes.js';
-
-dotenv.config();
 
 const app = express();
 const server = http.createServer(app);

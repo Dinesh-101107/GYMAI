@@ -44,7 +44,7 @@ async function main() {
     data: {
       email: 'admin@gymmate.ai',
       passwordHash: staffHash,
-      role: 'STAFF' as any,
+      role: 'ADMIN' as any,
       isEmailVerified: true,
       staff: {
         create: {

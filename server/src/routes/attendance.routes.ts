@@ -13,17 +13,17 @@ const router = Router();
 
 router.use(requireAuth);
 
-// QR Code ONLY generated for STAFF to display at front desk
-router.get('/gym-qr-token', requireRole('STAFF'), getGymQRToken);
+// QR Code generated for STAFF & ADMIN to display at front desk
+router.get('/gym-qr-token', requireRole('ADMIN', 'STAFF'), getGymQRToken);
 
 // SCANNING option for MEMBERS to check in
 router.post('/member-scan', requireRole('MEMBER'), memberScanCheckIn);
 
-// Staff desk manual check-in fallback
-router.post('/check-in', requireRole('STAFF'), manualCheckIn);
+// Staff/Admin desk manual check-in fallback
+router.post('/check-in', requireRole('ADMIN', 'STAFF'), manualCheckIn);
 
 // Live feeds & stats
-router.get('/recent', requireRole('STAFF'), getRecentCheckIns);
+router.get('/recent', requireRole('ADMIN', 'STAFF'), getRecentCheckIns);
 router.get('/member/:id', getMemberAttendanceStats);
 
 export default router;

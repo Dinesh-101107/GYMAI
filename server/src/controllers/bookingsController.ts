@@ -84,7 +84,8 @@ export async function createClassSlot(req: Request, res: Response): Promise<void
 export async function bookSlot(req: Request, res: Response): Promise<void> {
   try {
     const { slotId, lockingType = 'optimistic', memberIdOverride } = req.body;
-    const memberId = req.user?.role === 'STAFF' && memberIdOverride
+    const isStaffOrAdmin = req.user?.role === 'STAFF' || req.user?.role === 'ADMIN';
+    const memberId = isStaffOrAdmin && memberIdOverride
       ? memberIdOverride
       : req.user?.memberId;
 

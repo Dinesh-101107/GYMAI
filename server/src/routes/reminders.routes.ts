@@ -13,10 +13,10 @@ const router = Router();
 
 router.use(requireAuth);
 
-router.get('/candidates', requireRole('STAFF'), getCandidates);
-router.post('/send', requireRole('STAFF'), sendReminder);
-router.post('/bulk-send', requireRole('STAFF'), sendBulkReminders);
-router.get('/logs', requireRole('STAFF'), getReminderLogs);
+router.get('/candidates', requireRole('ADMIN', 'STAFF'), getCandidates);
+router.post('/send', requireRole('ADMIN', 'STAFF'), sendReminder);
+router.post('/bulk-send', requireRole('ADMIN', 'STAFF'), sendBulkReminders);
+router.get('/logs', requireRole('ADMIN', 'STAFF'), getReminderLogs);
 router.get('/my-reminders', requireRole('MEMBER'), getMemberReminders);
 
 export default router;

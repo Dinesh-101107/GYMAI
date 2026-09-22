@@ -38,7 +38,8 @@ enum BookingStatus {
 model User {
   id                   String    @id @default(uuid())
   email                String    @unique
-  passwordHash         String
+  googleId             String?   @unique
+  passwordHash         String?
   role                 Role      @default(MEMBER)
   isEmailVerified      Boolean   @default(false)
   verificationToken    String?

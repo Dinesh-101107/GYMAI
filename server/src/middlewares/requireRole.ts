@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 
-export function requireRole(...allowedRoles: ('STAFF' | 'MEMBER')[]) {
+export function requireRole(...allowedRoles: ('ADMIN' | 'STAFF' | 'MEMBER')[]) {
   return (req: Request, res: Response, next: NextFunction): void => {
     if (!req.user) {
       res.status(401).json({ error: 'Authentication required before role check.' });
